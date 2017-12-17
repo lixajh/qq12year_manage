@@ -1,32 +1,63 @@
 <template>
+<div style="height: 100%;">
+<calendar class='left-float'
+    :value="value"
+    :disabled-days-of-week="disabled"
+    :format="format"
+    :clear-button="clear"
+    :placeholder="placeholder"
+    :pane="1"
+    :has-input="false"
+    :on-day-click="onDayClick2"
+    
+  ></calendar>
 <div id="editor">
   <textarea :value="input" @input="update"></textarea>
   <div v-html="compiledMarkdown"></div>
+</div>
 </div>
 </template>
 
 <script>
 import marked from 'marked'
 import lodash from 'lodash'
+import Calendar from 'vue2-slot-calendar'
+
 var data = {
-  input : "hello"
+  input : "hello",
+  disabled: [],
+  value: '2015-01-01',
+  format: 'yyyy-MM-dd',
+  clear: true,
+  placeholder: 'placeholder is displayed when value is null or empty',
+  _dateMap:{}
 }
 export default {
   name: 'contentmanage',
+  components: {
+    // <my-component> 将只在父组件模板中可用
+    'Calendar': Calendar
+  },
   data:  function () {
     return data
     },
   computed: {
     compiledMarkdown: function () {
-      console.log(marked(data.input, { sanitize: true }))
+     
       return marked(data.input, { sanitize: true })
     }
   },
   methods: {
     update: _.debounce(function (e) {
       data.input = e.target.value
-    }, 300)
+    }, 300),
+
+    onDayClick2: function(){
+    alert("aa")
+  }
+    
   },
+ 
   // watch: {
   //   '$route': 'fetchList'
   // },
@@ -90,13 +121,23 @@ export default {
 </script>
 
 <style>
-html, body, #editor {
+
+html, body {
   margin: 0;
   height: 100%;
   font-family: 'Helvetica Neue', Arial, sans-serif;
   color: #333;
 }
 
+ #editor {
+  margin-left: 100px;
+  height: 100%;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+}
+.left-float{
+  float:left
+}
 textarea, #editor div {
   display: inline-block;
   width: 49%;

@@ -10,12 +10,12 @@
         <a-player ref="player2" :music="songs" key="csongdate1"></a-player>
       </template>
 
-      <nav class="inner">
+      <!-- <nav class="inner">
         <ul>
           <router-link to="/d/today" tag="li" :class="">今日精选</router-link>
           <router-link to="/calendar" tag="li">日历</router-link>
         </ul>
-      </nav>
+      </nav> -->
     </header>
     <main class="content">
       <transition name="fade" mode="out-in">
@@ -130,25 +130,14 @@ html {
 body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; 
 }
-h1, h2, h3, h4, h5, h6 {
-  font-weight: normal;
-  font-size: 1rem;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
+
+
 a {
   color: #42b983;
 }
 @media (min-width: 800px) {
   #app,
   main {
-    max-width: 600px;
     margin: 0 auto;
     height: 100%;
   }
