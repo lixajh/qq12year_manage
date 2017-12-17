@@ -1,5 +1,9 @@
 <template>
 <div style="height: 100%;">
+
+  <Slideout menu="#menu" panel="#panel" :toggleSelectors="['.toggle-button']" @on-open="open">
+      <nav id="menu">
+                  
 <calendar class='left-float'
     :value="value"
     :disabled-days-of-week="disabled"
@@ -11,10 +15,21 @@
     :on-day-click="onDayClick2"
     
   ></calendar>
+      </nav>
+      <main id="panel">
+        <header>
+          <div>
+            <button class="toggle-button">☰</button>
+ 
 <div id="editor">
   <textarea :value="input" @input="update"></textarea>
   <div v-html="compiledMarkdown"></div>
 </div>
+          </div>
+        </header>
+      </main>
+    </Slideout>
+
 </div>
 </template>
 
@@ -22,6 +37,7 @@
 import marked from 'marked'
 import lodash from 'lodash'
 import Calendar from 'vue2-slot-calendar'
+import Slideout from 'vue-slideout'
 
 var data = {
   input : "hello",
@@ -36,7 +52,8 @@ export default {
   name: 'contentmanage',
   components: {
     // <my-component> 将只在父组件模板中可用
-    'Calendar': Calendar
+    'Calendar': Calendar,
+     'Slideout': Slideout
   },
   data:  function () {
     return data
@@ -54,7 +71,10 @@ export default {
 
     onDayClick2: function(){
     alert("aa")
-  }
+  },
+   open: function () {
+        console.log('open event')
+      }
     
   },
  
@@ -161,6 +181,49 @@ textarea {
 code {
   color: #f66;
 }
+
+.slideout-menu {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 233px;
+    height: 100vh;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    z-index: 0;
+    display: none;
+    background-color: white;
+    color: black;
+  }
+
+  .slideout-menu-left {
+    left: 0;
+  }
+
+  .slideout-menu-right {
+    right: 0;
+  }
+
+  .slideout-panel {
+    /* background-color: #4B5;
+    color: white; */
+    position: relative;
+    z-index: 1;
+    will-change: transform;
+    min-height: 100vh;
+  }
+
+  .slideout-open body,
+  .slideout-open .slideout-panel {
+    overflow: hidden;
+  }
+
+  .slideout-open .slideout-menu {
+     overflow: hidden;
+    margin-top: 155px;
+    display: block;
+  }
+
 </style>
 
 
