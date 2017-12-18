@@ -46,7 +46,8 @@ var data = {
   format: 'yyyy-MM-dd',
   clear: true,
   placeholder: 'placeholder is displayed when value is null or empty',
-  _dateMap:{}
+  _dateMap:{},
+  currentEditDate: ''
 }
 export default {
   name: 'contentmanage',
@@ -69,8 +70,8 @@ export default {
       data.input = e.target.value
     }, 300),
 
-    onDayClick2: function(){
-    alert("aa")
+    onDayClick2: function(date){
+    data.currentEditDate = date.getFullYear() +"-"+date.getMonth() +"-"+date.getDate() )
   },
    open: function () {
         console.log('open event')
