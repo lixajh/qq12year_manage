@@ -1,30 +1,38 @@
 <template>
-<div style="height: 100%;">
+<div >
 
   <Slideout menu="#menu" panel="#panel" :toggleSelectors="['.toggle-button']" @on-open="open">
       <nav id="menu">
                   
-<calendar class='left-float'
-    :value="value"
-    :disabled-days-of-week="disabled"
-    :format="format"
-    :clear-button="clear"
-    :placeholder="placeholder"
-    :pane="1"
-    :has-input="false"
-    :on-day-click="onDayClick2"
-    
-  ></calendar>
+      <calendar style="margin_left:2px;"
+          :value="value"
+          :disabled-days-of-week="disabled"
+          :format="format"
+          :clear-button="clear"
+          :placeholder="placeholder"
+          :pane="1"
+          :borderWidth="borderWidth"
+          :has-input="false"
+          :on-day-click="onDayClick2">
+        </calendar>
+
+        <ul>
+          <li class="menu-li"  v-for="(menu, index) in menus"  @click="onMenuClick(index)" :key="menu.name" :class="{ currentItem: menu.selected}">
+            {{menu.name}}
+          </li>
+        </ul>
+        <button @click="save">保存</button>
+         
       </nav>
       <main id="panel">
-        <header>
-          <div>
+        <header style="height: 5550px">
+          <div style="height: 100%;">
             <button class="toggle-button">☰</button>
  
-<div id="editor">
-  <textarea :value="input" @input="update"></textarea>
-  <div v-html="compiledMarkdown"></div>
-</div>
+            <div id="editor">
+              <textarea :value="input" @input="update"></textarea>
+              <div v-html="compiledMarkdown"></div>
+            </div>
           </div>
         </header>
       </main>
@@ -47,7 +55,23 @@ var data = {
   clear: true,
   placeholder: 'placeholder is displayed when value is null or empty',
   _dateMap:{},
-  currentEditDate: ''
+  borderWidth:222,
+  currentEditDate: '',
+  menus:[ 
+    {name:"维基新闻",
+            selected:true,
+            contentMd:"",
+            contentHtml:""
+            },
+      {name:"百度新闻",
+    selected:false,
+             contentMd:"",
+            contentHtml:""},
+      {name:"当当当当",
+    selected:false,
+             contentMd:"",
+            contentHtml:""},
+],
 }
 export default {
   name: 'contentmanage',
@@ -63,7 +87,7 @@ export default {
     compiledMarkdown: function () {
      
       return marked(data.input, { sanitize: true })
-    }
+    },
   },
   methods: {
     update: _.debounce(function (e) {
@@ -71,11 +95,27 @@ export default {
     }, 300),
 
     onDayClick2: function(date){
-    data.currentEditDate = date.getFullYear() +"-"+date.getMonth() +"-"+date.getDate() )
+    data.currentEditDate = date.getFullYear() +"-"+date.getMonth() +"-"+date.getDate() 
   },
    open: function () {
         console.log('open event')
-      }
+      },
+    onMenuClick: function(index){
+      data.menus.forEach(element => {
+        if(element.selected){
+          element.contentMd = data.input;
+          element.contentHtml =  marked(data.input, { sanitize: true })
+        }
+        element.selected = false;
+      });
+      
+      data.menus[index].selected = true
+      data.input = data.menus[index].contentMd
+    },
+    save: function(){
+
+    }
+
     
   },
  
@@ -149,16 +189,23 @@ html, body {
   font-family: 'Helvetica Neue', Arial, sans-serif;
   color: #333;
 }
-
+.currentItem{
+  color:#f66;
+}
+.menu-li{
+  height: 50px;
+  line-height: 50px;
+  padding-left:20px;
+  border-bottom:1px solid;
+  cursor:pointer;
+}
  #editor {
   margin-left: 100px;
   height: 100%;
   font-family: 'Helvetica Neue', Arial, sans-serif;
   color: #333;
 }
-.left-float{
-  float:left
-}
+
 textarea, #editor div {
   display: inline-block;
   width: 49%;
@@ -186,24 +233,19 @@ code {
 .slideout-menu {
     position: fixed;
     top: 0;
+    padding: 10px;
     bottom: 0;
-    width: 233px;
+    width: 222px;
     height: 100vh;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     z-index: 0;
     display: none;
-    background-color: white;
+    background-color: rgb(246, 247, 239);
     color: black;
   }
 
-  .slideout-menu-left {
-    left: 0;
-  }
 
-  .slideout-menu-right {
-    right: 0;
-  }
 
   .slideout-panel {
     /* background-color: #4B5;
