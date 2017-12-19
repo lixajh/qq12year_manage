@@ -104,7 +104,6 @@ export default {
     
     }
     if(typeof(aplayer1) != "undefined"){
-      
       aplayer1.pause()
     }
       if(typeof(aplayer2) != "undefined"){

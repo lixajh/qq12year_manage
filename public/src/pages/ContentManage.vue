@@ -47,6 +47,15 @@ import lodash from 'lodash'
 import Calendar from 'vue2-slot-calendar'
 import Slideout from 'vue-slideout'
 
+    
+var serverBean={
+  date : null,
+  news1 : "",
+  news2 : '',
+  newsMd1 : '',
+  newsMd2 : ''
+
+}
 var data = {
   input : "hello",
   disabled: [],
@@ -95,7 +104,13 @@ export default {
     }, 300),
 
     onDayClick2: function(date){
-    data.currentEditDate = date.getFullYear() +"-"+date.getMonth() +"-"+date.getDate() 
+    data.currentEditDate = date.toISOString().slice(0,10)
+     this.$store.dispatch('FETCH_NEWS',{ date: data.currentEditDate}).then(
+      content => {
+        console.log(content)
+        
+      }
+    )
   },
    open: function () {
         console.log('open event')
@@ -114,7 +129,8 @@ export default {
     },
     save: function(){
 
-    }
+    },
+    
 
     
   },
