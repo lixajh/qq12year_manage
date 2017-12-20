@@ -4,6 +4,7 @@ import {
   fetchTest,
   fetchContent,
   fetchNews,
+  saveNews,
 } from '../api'
 
 
@@ -69,13 +70,25 @@ export default {
   },
 
   FETCH_NEWS ({ commit, dispatch, state }, { date: day }) {
-    console.log("df"+day)
-    return fetchNews(day)
-    .then(data => {
-     
-      // commit('SET_DAYS', data)
 
-      return Promise.resolve({ data })
+    return fetchNews(day).then(responseBean => {
+      if(responseBean.code != 200 || responseBean.message != "SUCCESS"){
+        return Promise.reject("获取数据失败")
+      }
+      console.log("ccc:" + responseBean)
+      return Promise.resolve(responseBean )
     })
-  }
+  },
+  SAVE_NEWS ({ commit, dispatch, state }, serverBean) {
+    
+        return saveNews(serverBean)
+        .then(respinseBean => {
+          if(respinseBean.code != 200 || respinseBean.message != "SUCCESS"){
+            return Promise.reject("获取数据失败")
+          }
+          // commit('SET_DAYS', data)
+    
+          return Promise.resolve(respinseBean.data )
+        })
+      }
 }

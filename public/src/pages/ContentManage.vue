@@ -49,7 +49,7 @@ import Slideout from 'vue-slideout'
 
     
 var serverBean={
-  date : null,
+  mDate : null,
   news1 : "",
   news2 : '',
   newsMd1 : '',
@@ -107,10 +107,15 @@ export default {
     data.currentEditDate = date.toISOString().slice(0,10)
      this.$store.dispatch('FETCH_NEWS',{ date: data.currentEditDate}).then(
       content => {
-        console.log(content)
+        console.log(content.message)
+        if(content.data != null){
+         
+        }
         
       }
-    )
+    ).catch(function(e){
+      console.log("bb"+e)
+    })
   },
    open: function () {
         console.log('open event')
@@ -128,6 +133,20 @@ export default {
       data.input = data.menus[index].contentMd
     },
     save: function(){
+      serverBean.mDate = data.currentEditDate,
+      serverBean.news1 = data.menus[0].contentHtml
+      serverBean.news2 = data.menus[1].contentHtml
+      serverBean.newsMd1 = data.menus[0].contentMd
+      serverBean.newsMd2 = data.menus[1].contentMd
+
+      this.$store.dispatch('SAVE_NEWS',serverBean).then(
+      content => {
+        console.log(content)
+        
+      }
+    ).catch(function(e){
+      console.log(e)
+    })
 
     },
     

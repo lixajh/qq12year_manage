@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Qs from "qs"
-var server_url="http://192.168.1.108:8004/"
+var server_url="http://192.168.1.37:8004/"
 export function fetchIndex () {
   return axios.get('/api/index').then(response => Promise.resolve(response.data))
 }
@@ -24,7 +24,7 @@ export function fetchContent (objectId) {
   
 export function fetchNews (mdate) {
   let data = Qs.stringify({date:mdate})
-  axios({
+  return axios({
     method:"post",
     headers : {
       "Content-Type":'application/x-www-form-urlencoded; charset=UTF-8'
@@ -33,8 +33,23 @@ export function fetchNews (mdate) {
     data:data,
     
     // headers:{'Content-Type':'application/x-www-form-urlencoded'}  
-  })
-  .then(response => {
+  }).then(response => {
+    return Promise.resolve(response.data)
+  }).catch(e => console.error("____error:" + e))
+}
+
+export function saveNews (serverBean) {
+ 
+  return axios({
+    method:"post",
+    headers : {
+      "Content-Type":'application/x-www-form-urlencoded; charset=UTF-8'
+  },
+    url:server_url + 'news/edit',
+    data:Qs.stringify(serverBean),
+    
+    // headers:{'Content-Type':'application/x-www-form-urlencoded'}  
+  }).then(response => {
     return Promise.resolve(response.data)
   }).catch(e => console.error("____error:" + e))
 }
