@@ -104,12 +104,22 @@ export default {
     }, 300),
 
     onDayClick2: function(date){
+      
     data.currentEditDate = date.toISOString().slice(0,10)
      this.$store.dispatch('FETCH_NEWS',{ date: data.currentEditDate}).then(
-      content => {
-        console.log(content.message)
-        if(content.data != null){
-         
+      response => {
+        if(response.data != null){
+          console.log(response.data.newsMd1)
+          data.menus[0].contentMd = response.data.newsMd1;
+          data.menus[0].contentHtml = response.data.news1;
+          data.menus[1].contentMd = response.data.newsMd2;
+          data.menus[1].contentHtml = response.data.news2;
+
+          data.menus.forEach(element => {
+          if(element.selected){
+            data.input = element.contentMd
+          }
+      });
         }
         
       }
@@ -133,6 +143,13 @@ export default {
       data.input = data.menus[index].contentMd
     },
     save: function(){
+
+        data.menus.forEach(element => {
+        if(element.selected){
+          element.contentMd = data.input;
+          element.contentHtml =  marked(data.input, { sanitize: true })
+        }})
+        
       serverBean.mDate = data.currentEditDate,
       serverBean.news1 = data.menus[0].contentHtml
       serverBean.news2 = data.menus[1].contentHtml
@@ -141,7 +158,7 @@ export default {
 
       this.$store.dispatch('SAVE_NEWS',serverBean).then(
       content => {
-        console.log(content)
+        console.log("保存成功:"+content)
         
       }
     ).catch(function(e){
