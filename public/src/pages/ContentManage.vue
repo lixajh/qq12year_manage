@@ -5,6 +5,7 @@
       <nav id="menu">
                   
       <calendar style="margin_left:2px;"
+          :key="value"
           :value="value"
           :disabled-days-of-week="disabled"
           :format="format"
@@ -46,7 +47,7 @@ import marked from 'marked'
 import lodash from 'lodash'
 import Calendar from 'vue2-slot-calendar'
 import Slideout from 'vue-slideout'
-
+import dateutils from 'vue-dateutils'
     
 var serverBean={
   mDate : null,
@@ -103,24 +104,33 @@ export default {
       data.input = e.target.value
     }, 300),
 
-    onDayClick2: function(date){
-      
-    data.currentEditDate = date.toISOString().slice(0,10)
+    onDayClick2: function(date){       
+          
      this.$store.dispatch('FETCH_NEWS',{ date: data.currentEditDate}).then(
       response => {
-        if(response.data != null){
-          console.log(response.data.newsMd1)
-          data.menus[0].contentMd = response.data.newsMd1;
-          data.menus[0].contentHtml = response.data.news1;
-          data.menus[1].contentMd = response.data.newsMd2;
-          data.menus[1].contentHtml = response.data.news2;
+        if(response.message == "SUCCESS"){  
 
-          data.menus.forEach(element => {
-          if(element.selected){
-            data.input = element.contentMd
+          data.currentEditDate = dateutils.dateToStr("YYYY-MM-DD",date)
+           console.log(data.currentEditDate)
+          data.value = data.currentEditDate
+          
+          if(response.data != null){
+            console.log(response.data.newsMd1)
+            data.menus[0].contentMd = response.data.newsMd1;
+            data.menus[0].contentHtml = response.data.news1;
+            data.menus[1].contentMd = response.data.newsMd2;
+            data.menus[1].contentHtml = response.data.news2;
+
+            data.menus.forEach(element => {
+              if(element.selected){
+                data.input = element.contentMd
+              }
+            });         
+          }else{
+              data.input = ""
           }
-      });
         }
+     
         
       }
     ).catch(function(e){
@@ -164,71 +174,11 @@ export default {
     ).catch(function(e){
       console.log(e)
     })
-
-    },
-    
-
-    
+    },  
   },
- 
-  // watch: {
-  //   '$route': 'fetchList'
-  // },
-
   mounted () {
-    // if(this.$route.params.day === '2017-12-09'){
-    // let m_song1s = [
-      
-    //   {
-    //     title: '2017-12-09 嘉宾：马未都',
-    //     author: '锵锵三人行',      
-    //     url: 'http://198.46.248.122:8888/2009-01-13.mp3',
-    //     pic: 'http://devtest.qiniudn.com/Preparation.jpg'
-    //   }
-    
-    // ]
-
-    // this.$store.commit('SET_SONGS', m_song1s)
-    // }else{
-    //   let m_song1s = [     
-    //     {
-    //       title: '2017-12-08 嘉宾：马未都',
-    //       author: '锵锵三人行',      
-    //       url: 'http://198.46.248.122:8888/2014-01-15.mp3',
-    //       pic: 'https://avatars0.githubusercontent.com/u/1683811?s=400&v=4'
-    //     }  
-    //   ]
-    //   this.$store.commit('SET_SONGS', m_song1s)
-    // } 
-  
-  // console.log('aab'+this.$route.params.day)
-  // this.$store.commit('SET_DATE', this.$route.params.day)   
+   
   },
-
-//   beforeMount () {
-//   let day = this.$route.params.day  
-//       console.log(day)
-
-//      this.$store.dispatch('FETCH_CONTENT',{ date: day}).then(
-//       content => {
-//         console.log(content)
-//  console.log(content.data)
-//   console.log(content.data.audio)
-//          let m_song1s = [     
-//         {
-//           title: day,
-//           author: '锵锵三人行',      
-//           url: content.data.audio,
-//           pic: 'https://avatars0.githubusercontent.com/u/1683811?s=400&v=4'
-//         }  
-//       ]
-//       this.$store.commit('SET_SONGS', m_song1s)
-//       this.$store.commit('SET_DATE', this.$route.params.day)   
-//       }
-//     )
-//   }
-
-
 }
 
 </script>

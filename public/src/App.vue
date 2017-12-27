@@ -27,6 +27,7 @@
 
 <script>
 import VueAplayer from 'vue-aplayer'
+
 let aplayer1
 let aplayer2
 let csongdate="2017-12-10"
