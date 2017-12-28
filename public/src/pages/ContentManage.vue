@@ -1,7 +1,7 @@
 <template>
-<div >
+<div style="height: 100%">
 
-  <Slideout menu="#menu" panel="#panel" :toggleSelectors="['.toggle-button']" @on-open="open">
+  <Slideout menu="#menu" panel="#panel" :toggleSelectors="['.toggle-button']" @on-open="open" style="height: 100%">
       <nav id="menu">
                   
       <calendar style="margin_left:2px;"
@@ -25,8 +25,14 @@
         <button @click="save">保存</button>
          
       </nav>
-      <main id="panel">
-        <header style="height: 5550px">
+      <main id="panel" 
+      style="height: 100%"
+        v-loading="loading" 
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(222, 222, 222, 0.8)"
+      >
+        <header style="height: 100%">
           <div style="height: 100%;">
             <button class="toggle-button">☰</button>
  
@@ -48,7 +54,14 @@ import lodash from 'lodash'
 import Calendar from 'vue2-slot-calendar'
 import Slideout from 'vue-slideout'
 import dateutils from 'vue-dateutils'
-    
+
+function operateSucess(root) {
+        root.$message({
+          message: '操作成功！',
+          type: 'success'
+        });
+    } 
+
 var serverBean={
   mDate : null,
   news1 : "",
@@ -58,7 +71,8 @@ var serverBean={
 
 }
 var data = {
-  input : "hello",
+  loading : false,
+  input : "",
   disabled: [],
   value: '2015-01-01',
   format: 'yyyy-MM-dd',
@@ -83,63 +97,68 @@ var data = {
             contentHtml:""},
 ],
 }
+
 export default {
   name: 'contentmanage',
+
   components: {
     // <my-component> 将只在父组件模板中可用
     'Calendar': Calendar,
      'Slideout': Slideout
   },
+
   data:  function () {
     return data
-    },
+  },
+
   computed: {
     compiledMarkdown: function () {
      
       return marked(data.input, { sanitize: true })
     },
   },
+
   methods: {
     update: _.debounce(function (e) {
       data.input = e.target.value
     }, 300),
 
     onDayClick2: function(date){       
-          
-     this.$store.dispatch('FETCH_NEWS',{ date: data.currentEditDate}).then(
-      response => {
-        if(response.message == "SUCCESS"){  
+      data.loading = true
+      data.currentEditDate = dateutils.dateToStr("YYYY-MM-DD",date)
+      this.$store.dispatch('FETCH_NEWS',{ date: data.currentEditDate}).then(
+        response => {
+          data.loading = false
+          if(response.message == "SUCCESS"){  
 
-          data.currentEditDate = dateutils.dateToStr("YYYY-MM-DD",date)
-           console.log(data.currentEditDate)
-          data.value = data.currentEditDate
-          
-          if(response.data != null){
-            console.log(response.data.newsMd1)
-            data.menus[0].contentMd = response.data.newsMd1;
-            data.menus[0].contentHtml = response.data.news1;
-            data.menus[1].contentMd = response.data.newsMd2;
-            data.menus[1].contentHtml = response.data.news2;
+            data.value = data.currentEditDate
+            
+            if(response.data != null){
+              console.log(response.data.newsMd1)
+              data.menus[0].contentMd = response.data.newsMd1;
+              data.menus[0].contentHtml = response.data.news1;
+              data.menus[1].contentMd = response.data.newsMd2;
+              data.menus[1].contentHtml = response.data.news2;
 
-            data.menus.forEach(element => {
-              if(element.selected){
-                data.input = element.contentMd
-              }
-            });         
-          }else{
-              data.input = ""
-          }
+              data.menus.forEach(element => {
+                if(element.selected){
+                  data.input = element.contentMd
+                }
+              });         
+            }else{
+                data.input = ""
+                data.currentEditDate = data.value
+            }
+          }           
         }
-     
-        
-      }
-    ).catch(function(e){
-      console.log("bb"+e)
-    })
-  },
-   open: function () {
-        console.log('open event')
-      },
+      ).catch(function(e){
+        data.loading = false
+        console.log("bb"+e)
+      })
+    },
+    open: function () {
+      console.log('open event')
+    },
     onMenuClick: function(index){
       data.menus.forEach(element => {
         if(element.selected){
@@ -153,7 +172,6 @@ export default {
       data.input = data.menus[index].contentMd
     },
     save: function(){
-
         data.menus.forEach(element => {
         if(element.selected){
           element.contentMd = data.input;
@@ -169,18 +187,19 @@ export default {
       this.$store.dispatch('SAVE_NEWS',serverBean).then(
       content => {
         console.log("保存成功:"+content)
-        
+        operateSucess(this);       
       }
     ).catch(function(e){
       console.log(e)
     })
-    },  
+    }, 
+    
   },
+
   mounted () {
    
   },
 }
-
 </script>
 
 <style>
